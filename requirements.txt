@@ -1,0 +1,4 @@
+streamlit
+langchain_google_genai
+langchain_core.prompts
+langchain_core.output_parsers
