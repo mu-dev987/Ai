@@ -16,7 +16,7 @@ answer_prompt = ChatPromptTemplate.from_messages([
 ])
 chain = translation_prompt | llm | output_cleaner | {"text": lambda x: x} | answer_prompt | llm | output_cleaner
 st.title(":red[Urdu AI Assistant]")
-input = st.text_area("",placeholder="MY NAME IS MAMUN")
+input = st.text_area("",placeholder="MY NAME IS FARZANA")
 if st.button("ANSWER"):
     if input == "":
         st.write("WRITE SOMETHING!")
