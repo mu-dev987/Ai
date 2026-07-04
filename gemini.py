@@ -3,7 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate 
 from langchain_core.output_parsers import StrOutputParser
 import streamlit as st
-os.environ['GEMINI_API_KEY'] = st.Secrets["MY_API_KEY"]
+os.environ['GEMINI_API_KEY'] = st.secrets["MY_API_KEY"]
 output_cleaner = StrOutputParser()
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=1)
 translation_prompt = ChatPromptTemplate.from_messages([
