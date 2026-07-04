@@ -5,7 +5,7 @@ from langchain_core.output_parsers import StrOutputParser
 import streamlit as st
 os.environ['GEMINI_API_KEY'] = st.secrets["MY_API_KEY"]
 output_cleaner = StrOutputParser()
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=1)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
 translation_prompt = ChatPromptTemplate.from_messages([
     ("system","You are a urdu-english expert. You are to take any line written in english and output the urdu trnaslation in the same script as english "),
     ("human","{text}")
@@ -16,7 +16,7 @@ answer_prompt = ChatPromptTemplate.from_messages([
 ])
 chain = translation_prompt | llm | output_cleaner | {"text": lambda x: x} | answer_prompt | llm | output_cleaner
 st.title(":red[Urdu AI Assistant]")
-input = st.text_area("",placeholder="What Can I Assist You With Today ?")
+input = st.text_area("",placeholder="MY NAME IS MAMUN")
 if st.button("ANSWER"):
     if input == "":
         st.write("WRITE SOMETHING!")
