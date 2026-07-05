@@ -21,7 +21,7 @@ if st.button("ANSWER"):
     if input == "":
         st.write("WRITE SOMETHING!")
     else:
-        with st.spinner("Processing your request..."):
+        with st.spinner("Thinking..."):
             try:
                 response = chain.invoke(input)
                 st.write(response)
