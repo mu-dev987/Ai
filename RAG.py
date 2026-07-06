@@ -16,7 +16,7 @@ import streamlit as st
 os.environ["GEMINI_API_KEY"] = st.secrets["MY_API_KEY"]
 output_cleaner = StrOutputParser()
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
-PDF_path = "CRAVING CRUST.pdf"
+PDF_path = "CRAVING_CRUST.pdf"
 st.title(":red[CRAVING CRUST AI]")
 st.spinner("loading...")
 
@@ -49,10 +49,10 @@ query = st.text_area("", placeholder="Ask Anything About the Menu")
 system_prompt = """
 you are an restaurant AI. 
 Your job is to answer the customer questions on the menu.
- Use ONLY THE PROVIDED INFORMATION, do not hallucinate. 
- If you cannot find the answer in the documents, tell that to the customer directly and clearly.
- Only accept questions in english/latin script.
- If they are in this script but another language like roman urdu or hindi (e.g kese ho app , is cheez ki kya qeemat hai) , acceot and answer in the same style.
+Use ONLY THE PROVIDED INFORMATION, do not hallucinate. 
+If you cannot find the answer in the documents, tell that to the customer directly and clearly.
+Only accept questions in english/latin script.
+If they are in this script but another language like roman urdu or hindi (e.g kese ho app , is cheez ki kya qeemat hai) , acceot and answer in the same style.
 context: {context}
 """
 prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", query)])
