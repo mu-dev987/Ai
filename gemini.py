@@ -3,7 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import streamlit as st
-os.environ['GEMINI_API_KEY'] = st.secrets["MY_API_KEY"]
+os.environ['GEMINI_API_KEY'] = st.secrets["YOUR_API_KEY"]
 output_cleaner = StrOutputParser()
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
 # translation_prompt = ChatPromptTemplate.from_messages([
@@ -21,10 +21,10 @@ input = st.text_area("",placeholder="What can I asssit you with today?")
 response_area = st.empty()
 if st.button("ANSWER"):
     response_area = st.empty()
-    if input == "":
+    if len(input.strip()) <= 0:
         response_area.write("WRITE SOMETHING!")
     else:
-        with st.spinner("Thinking..."):
+        with st.spinner("Thinking..."): 
             try:
                 response = chain.invoke(input)
                 response_area.write(response)
