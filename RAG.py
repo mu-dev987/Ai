@@ -76,6 +76,7 @@ chain = (
 
 response_area = st.empty()
 if st.button("ASK"):
+    response_area = st.empty()
     with st.spinner("Thinking..."):
         if len(query.strip()) <= 0:
             response_area.write("NO QUESTION ASKED")
