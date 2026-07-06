@@ -1,1 +1,1 @@
-the core code is the gemini.py file in which the code for deployment of the ai assistant lives
+the core code is the gemini.py and the RAG.py file in which the code for deployment of the ai assistants lives
