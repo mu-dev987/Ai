@@ -21,7 +21,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     # INITIAL SETUP
 
-    os.environ["GEMINI_API_KEY"] = st.secrets["MY_API_KEY"]
+    os.environ["GEMINI_API_KEY"] = st.secrets["YOUR_API_KEY"]
     output_cleaner = StrOutputParser()
     llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
     PDF_path = "CRAVING_CRUST.pdf"
