@@ -40,7 +40,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
     # CHUNKING
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=4000, chunk_overlap=800, separators=["\n\n", "\n", " ", ""]
+        chunk_size=3000, chunk_overlap=400, separators=["\n\n", "\n", " ", ""]
     )
     chunks = splitter.split_documents(pages)
 
@@ -48,7 +48,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = v_db.as_retriever(search_type="mmr",search_kwargs={"k": 4,"fetch_k": 15})
+    retriever = v_db.as_retriever(search_type="mmr",search_kwargs={"k": 4,"fetch_k": 20})
     query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
