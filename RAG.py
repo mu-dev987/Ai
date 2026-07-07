@@ -11,50 +11,61 @@ from langchain_chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
 import streamlit as st
 
-# LOAGIND WIDGET WHILE DOCUMENT AND AI SETUP
+# AI SETUP
+
+os.environ["GEMINI_API_KEY"] = st.secrets["YOUR_API_KEY"]
+output_cleaner = StrOutputParser()
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
+
+# DOCUMENT CLEANER
 
 def format_docs(docs):
     return "\n\n---\n\n".join(doc.page_content for doc in docs)
 
+# LOADING WIDGET
 
-with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
+@st.cache_resource(show_spinner=False)
+def initialize_retriever():
 
-    # INITIAL SETUP
+    with st.spinner("Loading Menu Database and AI Assistant.......PLease Wait..."):
 
-    os.environ["GEMINI_API_KEY"] = st.secrets["YOUR_API_KEY"]
-    output_cleaner = StrOutputParser()
-    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
-    PDF_path = "CRAVING_CRUST.pdf"
-    st.title(":red[CRAVING CRUST AI]")
-    st.spinner("loading...")
+        # LOADING DOCUMENT
 
+        PDF_path = "CRAVING_CRUST.pdf"
+        st.title(":red[CRAVING CRUST AI]")
+        loader = PyPDFLoader(PDF_path)
+        pages = loader.load()
 
+        # CHUNKING
 
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=3000, chunk_overlap=400, separators=["\n\n", "\n", " ", ""]
+        )
+        chunks = splitter.split_documents(pages)
 
-    st.spinner("Loading...")
-    # LOADING DOCUMENT
+        # EMBEDDING
 
-    loader = PyPDFLoader(PDF_path)
-    pages = loader.load()
+        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+        vector_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
+        retriever = vector_db.as_retriever(search_type="mmr",search_kwargs={"k": 5,"fetch_k": 15})
+        return retriever
 
-    # CHUNKING
+# DATABASE INITIALIZING 
 
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=3000, chunk_overlap=400, separators=["\n\n", "\n", " ", ""]
-    )
-    chunks = splitter.split_documents(pages)
+try:
+    retriever = initialize_retriever()
+except Exception as e:
+    st.error(f"Failed to load PDF database: {e}")
+    st.stop()   
 
-    # EMBEDDING
+# QUESTION 
 
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = v_db.as_retriever(search_type="mmr",search_kwargs={"k": 4,"fetch_k": 20})
-    query = st.text_area("", placeholder="Ask Anything About the Menu")
+query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
 
 system_prompt = """
-you are an restaurant AI. 
+you are an restaurant AI fluent in english and urdu. 
 Your job is to answer the customer questions on the menu.
 Be smart about the questions and try to understand and grasp the user intent as they will not always be clear , they may ask for (price of burger) but not specify which one.
 In such cases behave smartly and ouput something related from the menu.
@@ -63,7 +74,7 @@ If the answer is long, still output the complete answer regardless of the length
 Use ONLY THE PROVIDED INFORMATION, do not hallucinate. 
 If you cannot find the answer in the documents, tell that to the customer directly and clearly.(however if it matches a little still give them the output)
 Only accept questions in english/latin script.
-If they are in this script but another language like roman urdu or hindi (e.g kese ho app , is cheez ki kya qeemat hai) , acceot and answer in the same style.
+If they are in this script but another language like roman urdu or hindi (e.g kese ho app , is cheez ki kya qeemat hai) , accept and answer in the same style.
 BEHAVE INTELLIGENTLY
 context: {context}
 """
@@ -90,12 +101,6 @@ if st.button("ASK"):
             try:
                 response = chain.invoke(query)
                 response_area.write(response)
-                with st.expander("🔍 DEBUG: What did the AI read?"):
-                    # Manually fetch the chunks for this query
-                    retrieved_docs = retriever.invoke(query)
-                    for i, doc in enumerate(retrieved_docs):
-                        st.markdown(f"**Chunk {i+1}**")
-                        st.code(doc.page_content)
             except Exception as e:
                 if "429" in str(e): 
                         st.error( "AW SNAP! our Ai tokens are finished :(")
