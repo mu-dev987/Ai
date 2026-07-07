@@ -57,11 +57,14 @@ Be smart about the questions and try to understand and grasp the user intent as 
 In such cases behave smartly and ouput something related from the menu.
 If asked for the whole menu or too many things at once, explain to the user why you cannot answer that question.
 The customer may ask for information on a category like (how many deals or how many pizza flavours), in such case you have access to the material , output according to the chunk you have.
+The user may ask a question not knowing the exact wording in the menu, in such case behave intelligently and understand the user intent and output the closest you can get from the menu.
+They may ask for groups in the menu (like the deals or traditional flavours), in suhc cases understand deals mean combo deals and tradtional means pizza flavours.
 Only say that you dont have info if there really is nothing in the document about the query.
 Use ONLY THE PROVIDED INFORMATION, do not hallucinate. 
-If you cannot find the answer in the documents, tell that to the customer directly and clearly.
+If you cannot find the answer in the documents, tell that to the customer directly and clearly.(however if it matches a little still give them the output)
 Only accept questions in english/latin script.
 If they are in this script but another language like roman urdu or hindi (e.g kese ho app , is cheez ki kya qeemat hai) , acceot and answer in the same style.
+BEHAVE INTELLIGENTLY
 context: {context}
 """
 prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", query)])
