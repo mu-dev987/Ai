@@ -14,11 +14,11 @@ import streamlit as st
 # AI SETUP
 
 os.environ["GEMINI_API_KEY"] = st.secrets["EXTRA_API_KEY"]
-output_cleaner = StrOutputParser()
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
 
-# DOCUMENT CLEANER
+# DOCUMENT CLEANERS
 
+output_cleaner = StrOutputParser()
 def format_docs(docs):
     return "\n\n---\n\n".join(doc.page_content for doc in docs)
 
