@@ -40,7 +40,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
     # CHUNKING
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=4000, chunk_overlap=800, separators=["\n\n", "\n", ".", ""]
+        chunk_size=4000, chunk_overlap=800, separators=["\n\n", "\n", " ", ""]
     )
     chunks = splitter.split_documents(pages)
 
