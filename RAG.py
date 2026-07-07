@@ -90,6 +90,12 @@ if st.button("ASK"):
             try:
                 response = chain.invoke(query)
                 response_area.write(response)
+                with st.expander("🔍 DEBUG: What did the AI read?"):
+                    # Manually fetch the chunks for this query
+                    retrieved_docs = retriever.invoke(query)
+                    for i, doc in enumerate(retrieved_docs):
+                        st.markdown(f"**Chunk {i+1}**")
+                        st.code(doc.page_content)
             except Exception as e:
                 if "429" in str(e): 
                         st.error( "AW SNAP! our Ai tokens are finished :(")
