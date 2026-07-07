@@ -13,6 +13,9 @@ import streamlit as st
 
 # LOAGIND WIDGET WHILE DOCUMENT AND AI SETUP
 
+def format_docs(docs):
+    return "\n\n---\n\n".join(doc.page_content for doc in docs)
+
 with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     # INITIAL SETUP
@@ -25,8 +28,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
     st.spinner("loading...")
 
 
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
+
 
     st.spinner("Loading...")
     # LOADING DOCUMENT
@@ -45,7 +47,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = v_db.as_retriever(search_kwargs={"k": 4})
+    retriever = v_db.as_retriever(search_kwargs={"k": 6})
     query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
