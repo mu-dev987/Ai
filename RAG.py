@@ -11,50 +11,45 @@ from langchain_chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
 import streamlit as st
 
-# INITIAL SETUP
-
-os.environ["GEMINI_API_KEY"] = st.secrets["MY_API_KEY"]
-output_cleaner = StrOutputParser()
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
-
-# DOCUMENT LOADING
+# LOAGIND WIDGET WHILE DOCUMENT AND AI SETUP
 
 def format_docs(docs):
     return "\n\n---\n\n".join(doc.page_content for doc in docs)
 
-@st.cache_resource
-def initialize_retriever():
-    with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
- 
-       # LOADING DOCUMENT
+with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
-        PDF_path = "CRAVING_CRUST.pdf"
-        st.title(":red[CRAVING CRUST AI]")
-        loader = PyPDFLoader(PDF_path)
-        pages = loader.load()
+    # INITIAL SETUP
 
-        # CHUNKING
+    os.environ["GEMINI_API_KEY"] = st.secrets["MY_API_KEY"]
+    output_cleaner = StrOutputParser()
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
+    PDF_path = "CRAVING_CRUST.pdf"
+    st.title(":red[CRAVING CRUST AI]")
+    st.spinner("loading...")
 
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=4000, chunk_overlap=800, separators=["\n\n", "\n", ".", ""]
-        )
-        chunks = splitter.split_documents(pages)
 
-        # EMBEDDING
 
-        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-        v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-        retriever = v_db.as_retriever(search_kwargs={"k": 4})
-        return retriever
-    
 
-try:
-    retriever = initialize_retriever()
-except Exception as e:
-    st.error(f"Failed to load PDF database: {e}")
-    st.stop()    
-query = st.text_area("", placeholder="Ask Anything About the Menu")
+    st.spinner("Loading...")
+    # LOADING DOCUMENT
+
+    loader = PyPDFLoader(PDF_path)
+    pages = loader.load()
+
+    # CHUNKING
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=4000, chunk_overlap=800, separators=["\n\n", "\n", ".", ""]
+    )
+    chunks = splitter.split_documents(pages)
+
+    # EMBEDDING
+
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
+    retriever = v_db.as_retriever(search_kwargs={"k": 4})
+    query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
 
