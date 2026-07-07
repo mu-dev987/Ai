@@ -47,7 +47,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = v_db.as_retriever(search_kwargs={"score_threshold": 0.5,"k": 3})
+    retriever = v_db.as_retriever(search_type = "similarity_score_threshold",search_kwargs={"score_threshold": 0.5,"k": 3})
     query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
@@ -66,7 +66,7 @@ If they are in this script but another language like roman urdu or hindi (e.g ke
 BEHAVE INTELLIGENTLY
 context: {context}
 """
-prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", query)])
+prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("human", "{question}")])
 
 # CHAINING
 
