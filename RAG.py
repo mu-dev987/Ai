@@ -48,7 +48,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = v_db.as_retriever(search_kwargs={"k": 4})
+    retriever = v_db.as_retriever(search_type="mmr",search_kwargs={"k": 4,"fetch_k": 15})
     query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
