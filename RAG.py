@@ -45,7 +45,7 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     v_db = Chroma.from_documents(documents=chunks, embedding=embeddings)
-    retriever = v_db.as_retriever(search_kwargs={"k": 3})
+    retriever = v_db.as_retriever(search_kwargs={"k": 4})
     query = st.text_area("", placeholder="Ask Anything About the Menu")
 
 # PROMPT ENGINEERING
@@ -53,8 +53,9 @@ with st.spinner("Loading Menu Database and AI Assistant...PLease Wait..."):
 system_prompt = """
 you are an restaurant AI. 
 Your job is to answer the customer questions on the menu.
-Be smart about the questions and try to understand and grasp the user intent as they will not always be clear , they may ask for (pric of burger) but not specify which one.
+Be smart about the questions and try to understand and grasp the user intent as they will not always be clear , they may ask for (price of burger) but not specify which one.
 In such cases behave smartly and ouput something related from the menu.
+If asked for the whole menu or too many things at once, explain to the user why you cannot answer that question.
 Use ONLY THE PROVIDED INFORMATION, do not hallucinate. 
 If you cannot find the answer in the documents, tell that to the customer directly and clearly.
 Only accept questions in english/latin script.
