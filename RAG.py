@@ -90,7 +90,7 @@ if st.button("ASK"):
                 response = chain.invoke(query)
                 response_area.write(response)
             except Exception as e:
-                if "429" in str(e):
+                if "429" in str(e): 
                         st.error( "AW SNAP! our Ai tokens are finished :(")
                 else:    
                     st.error(f"OOPS! something went wrong {type(e).__name__}")
