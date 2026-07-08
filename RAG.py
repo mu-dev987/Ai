@@ -50,7 +50,7 @@ def initialize_retriever():
         retriever = vector_db.as_retriever(search_type="mmr",search_kwargs={"k": 5,"fetch_k": 15})
         return retriever
 
-# DATABASE INITIALIZING 
+# DATABASE INITIALIZING
 
 try:
     retriever = initialize_retriever()
@@ -58,7 +58,7 @@ except Exception as e:
     st.error(f"Failed to load PDF database: {e}")
     st.stop()   
 
-# QUESTION 
+# QUESTION
 
 query = st.text_area("", placeholder="Ask Anything About the Menu")
 
@@ -94,6 +94,7 @@ response_area = st.empty()
 
 if st.button("ASK"):
     response_area = st.empty()
+
     with st.spinner("Thinking..."):
         if len(query.strip()) <= 0:
             response_area.write("NO QUESTION ASKED")
@@ -102,9 +103,9 @@ if st.button("ASK"):
                 response = chain.invoke(query)
                 response_area.write(response)
             except Exception as e:
-                if "429" in str(e): 
-                        st.error( "AW SNAP! our Ai tokens are finished :(")
-                else:    
+                if "429" in str(e):
+                    st.error("AW SNAP! our Ai tokens are finished :(")
+                else:
                     st.error(f"OOPS! something went wrong {type(e).__name__}")
 else:
     response_area.write("")
