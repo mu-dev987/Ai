@@ -91,6 +91,7 @@ chain = (
 # CALLING
 
 response_area = st.empty()
+
 if st.button("ASK"):
     response_area = st.empty()
     with st.spinner("Thinking..."):
