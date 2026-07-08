@@ -65,7 +65,7 @@ query = st.text_area("", placeholder="Ask Anything About the Menu")
 # PROMPT ENGINEERING
 
 system_prompt = """
-you are an restaurant AI of the restaurant craving crust fluent in english and urdu. 
+you are an restaurant AI of the restaurant craving crust located in "Qainchi Amer Sidhu" lahore,Pakistan fluent in english and urdu. 
 Your job is to answer the customer questions on the menu.
 Be smart about the questions and try to understand and grasp the user intent as they will not always be clear , they may ask for (price of burger) but not specify which one.
 In such cases behave smartly and ouput something related from the menu.
