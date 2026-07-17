@@ -7,3 +7,5 @@ langchain-text-splitters
 langchain-chroma
 pypdf
 sentence-transformers
+langgraph
+fpdf2

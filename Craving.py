@@ -1,0 +1,76 @@
+# IMPORTING
+
+import os
+import re
+import streamlit as st
+from Agent import agent
+
+
+# HEADING
+
+st.title(":red[CRAVING CRUST] :pizza:")
+
+# MEMORY HANDLING
+
+if "store_thread_id" not in st.session_state:
+    st.session_state["store_thread_id"] = "session_user_01"
+
+if "current_user_receipt" not in st.session_state:
+    st.session_state["current_user_receipt"] = None
+
+# QUESTION
+
+query = st.text_area("", placeholder="How can I assist you with the menu ?")
+
+#  EXECUTION AND RESPONSE
+
+response_area = st.empty()
+
+if st.button("ASK"):
+
+    # EMPTY PROMPT CHECK
+
+    if len(query.strip()) <= 0:
+        st.write("NO QUESTION ASKED")
+        st.session_state["current_user_receipt"] = None
+    else:
+        st.session_state["current_user_receipt"] = None
+
+        # THINKING SPINNER
+
+        with st.spinner("Thinking..."):
+            config = {"configurable": {"thread_id": st.session_state["store_thread_id"]}}
+
+            # ERROR HANDLING
+
+            try:
+                result = agent.invoke({"messages": [{"role": "user", "content": query}]}, config=config)
+                reply = result["messages"][-1].text
+                response_area.write(reply)
+            
+            except Exception as e:
+                    if "429" in str(e):
+                        st.error("Aw SNAP! Our AI Tokens are finished.") 
+                    else:
+                        st.error(f"ERROR: Something went wrong: {type(e).__name__}") 
+
+        # INVOICE CHECKING & GENERATION
+
+            receipt_file = None
+            try:
+                for msg in result["messages"]:
+                    if getattr(msg, "name", None) == "order":
+                        match = re.search(r"Invoice generated as (\S+)", msg.content)
+                        if match:
+                            receipt_file = match.group(1)
+
+                        if os.path.exists(receipt_file):
+                            with open(receipt_file, "rb") as pdf_file:
+                                st.download_button(
+                                    label="📄 Download Your Receipt (PDF)",
+                                    data=pdf_file,
+                                    file_name=f"craving_crust_{receipt_file}",
+                                    mime="application/pdf",
+                                )
+            except Exception as e:
+                print(e)
