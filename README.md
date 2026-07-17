@@ -1,1 +1,1 @@
-the core code is the gemini.py and the RAG.py file in which the code for deployment of the ai assistants lives
+the core code is the Craving.py file in which the final code with refernces to RAG.py,Agent.py exists & deploys the AI agent.
