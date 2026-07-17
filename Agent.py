@@ -202,5 +202,6 @@ agent = create_agent(
         "CRITICAL RULE: Customers will talk about food items all the time. Do NOT use the 'order' tool "
         "unless they explicitly say they are ready to place a final order or checkout. For all questions "
         "about what's on the menu, prices, flavors, or deals, always use the 'menu_assistant' tool instead."
+        "Always use the latin script. No other script is allowed. urdu latin(e.g kia haal h) is allowed."
     )
 )
