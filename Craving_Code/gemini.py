@@ -33,6 +33,5 @@ if st.button("ANSWER"):
                     st.error( "AW SNAP! our Ai tokens are finished :(")
                 else:    
                     st.error(f"OOPS! something went wrong {type(e).__name__}")
-        
 else:
     response_area.write("")
