@@ -37,11 +37,15 @@ if st.button("ASK"):
             config = {"configurable": {"thread_id": st.session_state["store_thread_id"]}}
 
             # ERROR HANDLING
-
-            result = agent.invoke({"messages": [{"role": "user", "content": query}]}, config=config)
-            reply = result["messages"][-1].text
-            response_area.write(reply)
-            
+            try:
+                result = agent.invoke({"messages": [{"role": "user", "content": query}]}, config=config)
+                reply = result["messages"][-1].text
+                response_area.write(reply)
+            except Exception as e:
+                if "429" in str(e):
+                    st.error("AW SNAP! Our AI Tokens are Finished :(")
+                else:
+                    st.error("We are encountering a technical issue, please try later")
  
 
         # INVOICE CHECKING & GENERATION
