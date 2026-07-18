@@ -99,7 +99,7 @@ def order(
 
     pk_now = datetime.now(ZoneInfo("Asia/Karachi"))
     date_of_order = pk_now.strftime("%d/%m/%Y")
-    time_of_order = pk_now.strftime("%d-%b-%Y %I:%M %p")
+    time_of_order = pk_now.strftime("%I:%M %p")
     bill_no = f"{random.randint(0, 999999):06d}"
     unique_filename = f"receipt_{bill_no}.pdf"
     order_items = items_list if items_list else []
