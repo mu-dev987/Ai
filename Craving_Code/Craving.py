@@ -39,6 +39,7 @@ if st.button("ASK"):
             config = {"configurable": {"thread_id": st.session_state["store_thread_id"]}}
 
             # ERROR HANDLING
+            
             try:
                 result = agent.invoke({"messages": [{"role": "user", "content": query}]}, config=config)
                 reply = result["messages"][-1].text
