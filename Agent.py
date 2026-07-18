@@ -7,6 +7,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from fpdf import FPDF
 import random
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import streamlit as st
 from typing import List, Dict
 from RAG import chain
@@ -96,8 +97,9 @@ def order(
 
     # USER, EXTRA INFO DYNAMIC CODING
 
-    date_of_order = datetime.now().strftime("%d/%m/%Y")
-    time_of_order = datetime.now().strftime("%I:%M:%S %p")
+    pk_now = datetime.now(ZoneInfo("Asia/Karachi"))
+    date_of_order = pk_now.strftime("%d/%m/%Y")
+    time_of_order = pk_now.strftime("%d-%b-%Y %I:%M %p")
     bill_no = f"{random.randint(0, 999999):06d}"
     unique_filename = f"receipt_{bill_no}.pdf"
     order_items = items_list if items_list else []
