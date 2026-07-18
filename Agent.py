@@ -205,5 +205,6 @@ agent = create_agent(
         "unless they explicitly say they are ready to place a final order or checkout. For all questions "
         "about what's on the menu, prices, flavors, or deals, always use the 'menu_assistant' tool instead."
         "Always use the latin script. No other script is allowed. urdu latin(e.g kia haal h) is allowed."
+        "After giving the invoice tell the user to look in the download folder on their device"
     )
 )
