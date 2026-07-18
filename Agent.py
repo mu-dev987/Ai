@@ -36,7 +36,7 @@ class ThermalReceipt(FPDF):
 
 # AI SETUP
 
-os.environ["GEMINI_API_KEY"] = st.secrets["YOUR_API_KEY"]
+os.environ["GEMINI_API_KEY"] = st.secrets["BACKUP_API_KEY"]
 
 # CHATBOT TOOL
 
