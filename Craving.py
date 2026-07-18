@@ -15,6 +15,7 @@ st.title(":red[CRAVING CRUST] :pizza:")
 
 if "store_thread_id" not in st.session_state:
     st.session_state["store_thread_id"] = str(uuid.uuid4())
+receipt_file = None
 
 # QUESTION
 
