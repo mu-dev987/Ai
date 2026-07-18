@@ -1,6 +1,7 @@
 # IMPORTING
 
 import os
+import uuid
 import re
 import streamlit as st
 from Agent import agent
@@ -13,7 +14,7 @@ st.title(":red[CRAVING CRUST] :pizza:")
 # MEMORY HANDLING
 
 if "store_thread_id" not in st.session_state:
-    st.session_state["store_thread_id"] = "session_user_01"
+    st.session_state["store_thread_id"] = str(uuid.uuid4())
 
 # QUESTION
 
