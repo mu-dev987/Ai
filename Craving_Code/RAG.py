@@ -31,9 +31,10 @@ def initialize_retriever():
 
     with st.spinner("Loading Menu Database and AI Assistant.......PLease Wait..."):
         
-        # LOADING DOCUMENT
+        # LOADING DOCUMENT 
 
-        PDF_path = "CRAVING_CRUST.pdf"
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        PDF_path = os.path.join(BASE_DIR, "CRAVING_CRUST.pdf")
         loader = PyPDFLoader(PDF_path)
         pages = loader.load()
 
