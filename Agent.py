@@ -194,7 +194,7 @@ def order(
 memory = InMemorySaver()
 tools = [menu_assistant, order]
 agent = create_agent(
-    model="google_genai:gemini-2.5-flash",
+    model="google_genai:gemini-3.5-flash",
     tools=tools,
     checkpointer=memory,
     system_prompt=(

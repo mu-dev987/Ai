@@ -43,16 +43,11 @@ if st.button("ASK"):
 
             # ERROR HANDLING
 
-            try:
-                result = agent.invoke({"messages": [{"role": "user", "content": query}]}, config=config)
-                reply = result["messages"][-1].text
-                response_area.write(reply)
+            result = agent.invoke({"messages": [{"role": "user", "content": query}]}, config=config)
+            reply = result["messages"][-1].text
+            response_area.write(reply)
             
-            except Exception as e:
-                    if "429" in str(e):
-                        st.error("Aw SNAP! Our AI Tokens are finished.") 
-                    else:
-                        st.error(f"ERROR: Something went wrong: {type(e).__name__}") 
+ 
 
         # INVOICE CHECKING & GENERATION
 

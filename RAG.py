@@ -14,7 +14,7 @@ import streamlit as st
 # AI SETUP
 
 os.environ["GEMINI_API_KEY"] = st.secrets["NEW_API_KEY"]
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
+llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", temperature=0.7)
 
 # DOCUMENT CLEANERS
 
