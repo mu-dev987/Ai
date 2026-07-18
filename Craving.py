@@ -10,6 +10,11 @@ from Agent import agent
 
 st.title(":red[CRAVING CRUST] :pizza:")
 
+# MEMORY HANDLING
+
+if "store_thread_id" not in st.session_state:
+    st.session_state["store_thread_id"] = "session_user_01"
+
 # QUESTION
 
 query = st.text_area("", placeholder="How can I assist you with the menu ?")
