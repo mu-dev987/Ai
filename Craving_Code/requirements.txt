@@ -10,3 +10,4 @@ pypdf
 sentence-transformers
 langgraph
 fpdf2
+mysql
