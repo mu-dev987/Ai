@@ -10,4 +10,4 @@ pypdf
 sentence-transformers
 langgraph
 fpdf2
-mysql
+mysql-connector-python
