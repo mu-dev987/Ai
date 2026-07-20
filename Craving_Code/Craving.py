@@ -35,7 +35,7 @@ if st.button("ASK"):
 
         # THINKING SPINNER
 
-        with st.spinner("Thinking..."):
+        with st.spinner("Processing..."):
             config = {"configurable": {"thread_id": st.session_state["store_thread_id"]}}
 
             # ERROR HANDLING

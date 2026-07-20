@@ -10,9 +10,12 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import streamlit as st
 from typing import List, Dict
+import mysql.connector
+import json
 from RAG import chain
 
 # PDF CLASS
+
 
 class ThermalReceipt(FPDF):
 
@@ -35,19 +38,19 @@ class ThermalReceipt(FPDF):
         )
         self.ln(1)
 
+
 # AI SETUP
 
 os.environ["GEMINI_API_KEY"] = st.secrets["EXTRA_API_KEY"]
 
 # CHATBOT TOOL
 
+
 @tool
 def menu_assistant(query: str) -> str:
-    
-    """USE THIS TOOL FIRST for any general questions, menu browsing, checking prices, 
-    asking about ingredients, or casual conversation. If the user is not explicitly 
+    """USE THIS TOOL FIRST for any general questions, menu browsing, checking prices,
+    asking about ingredients, or casual conversation. If the user is not explicitly
     ready to buy or checkout, use this tool."""
-
 
     try:
         response = chain.invoke(query)
@@ -58,7 +61,9 @@ def menu_assistant(query: str) -> str:
         else:
             return f"ERROR: Something went wrong: {type(e).__name__}"
 
+
 # INVOICE TOOL
+
 
 @tool
 def order(
@@ -66,7 +71,7 @@ def order(
     order_type: str,
     payment_method: str,
     items_list: List[Dict],
-    delivery_address: str = "N/A"
+    delivery_address: str = "N/A",
 ):
     """Call this tool when the user has confirmed their order to be placed.
 
@@ -87,7 +92,11 @@ def order(
     items_list must be a list of dicts where each dict has 'name', 'qty', and 'price'.
     critical: if the user says "where is my invoice" use this tool to give the invoice
     """
-    
+    """
+    UPDATE the database using the order values.
+    """
+
+
     # RESTAURANT INFO HARDCODING
 
     restaurant_name = "CRAVING CRUST"
@@ -95,16 +104,56 @@ def order(
     contact_number = "0326-446414"
     website_name = "cravingcrust.streamlit.app"
 
+    # DATABASE HANDLING
+
+    try:
+        conn = mysql.connector.connect(
+            host=st.secrets["HOST"],
+            user=st.secrets["USER"],
+            password=st.secrets["PASSWORD"],
+            database=st.secrets["DATABASE"],
+        )
+
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT bill_no FROM orders")
+        rows = cursor.fetchall()
+        column_as_list = [row[0] for row in rows]
+    except Exception as e:
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        try:
+            conn.close()
+        except Exception:
+            pass
+        return f"failed to load order database {e}"
+    unique_bill_no = False
+    try:
+        while not unique_bill_no:
+            bill_no = f"{random.randint(0, 999999):06d}"
+            if bill_no in column_as_list:
+                continue
+            else:
+                cursor.execute("INSERT INTO orders (bill_no) VALUES (%s)", (bill_no,))
+                conn.commit()
+                break
+
+        unique_filename = f"receipt_{bill_no}.pdf"
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        return f"something went wrong at bill generation {e}"
+
     # USER, EXTRA INFO DYNAMIC CODING
 
     pk_now = datetime.now(ZoneInfo("Asia/Karachi"))
-    date_of_order = pk_now.strftime("%d/%m/%Y")
-    time_of_order = pk_now.strftime("%I:%M %p")
-    bill_no = f"{random.randint(0, 999999):06d}"
-    unique_filename = f"receipt_{bill_no}.pdf"
+    date_of_order = pk_now.strftime("%Y/%m/%d")
+    time_of_order = pk_now.strftime("%H:%M:%S")
     order_items = items_list if items_list else []
     subtotal = sum(item["qty"] * item["price"] for item in order_items)
-    delivery_fee = 5.00 if order_type.lower() == "delivery" else 0.00
+    delivery_fee = 50.00 if order_type.lower() == "delivery" else 0.00
     total_amount = subtotal + delivery_fee
 
     # PDF LOGIC
@@ -187,9 +236,35 @@ def order(
 
     pdf.output(unique_filename)
 
+    # UPDATE DATABASE
+
+    items_json = json.dumps(order_items)
+    try:
+        cursor.execute(
+            "UPDATE orders SET name=%s, items=%s, amount=%s, order_date=%s, order_time=%s, type_of_order=%s, payment_method=%s WHERE bill_no=%s",
+            (
+                customer_name,
+                items_json,
+                total_amount,
+                date_of_order,
+                time_of_order,
+                order_type,
+                payment_method,
+                bill_no,
+            ),
+        )
+        conn.commit()
+    except Exception as e:
+        print(e)
+        return f"Invoice generated as {unique_filename} but something went wrong {e}"
+    finally:
+        cursor.close()
+        conn.close()
+
     # RETURN SUCCESS
 
     return f"Invoice generated as {unique_filename}"
+
 
 # AGENT CREATION
 
@@ -206,5 +281,5 @@ agent = create_agent(
         "about what's on the menu, prices, flavors, or deals, always use the 'menu_assistant' tool instead."
         "Always use the latin script. No other script is allowed. urdu latin(e.g kia haal h) is allowed."
         "After giving the invoice tell the user to look in the download folder on their device"
-    )
+    ),
 )
