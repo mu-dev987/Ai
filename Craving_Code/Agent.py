@@ -142,8 +142,14 @@ def order(
 
         unique_filename = f"receipt_{bill_no}.pdf"
     except Exception as e:
-        cursor.close()
-        conn.close()
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        try:
+            conn.close()
+        except Exception:
+            pass
         return f"something went wrong at bill generation {e}"
 
     # USER, EXTRA INFO DYNAMIC CODING
@@ -281,5 +287,6 @@ agent = create_agent(
         "about what's on the menu, prices, flavors, or deals, always use the 'menu_assistant' tool instead."
         "Always use the latin script. No other script is allowed. urdu latin(e.g kia haal h) is allowed."
         "After giving the invoice tell the user to look in the download folder on their device"
+        "When generating the reciept only for the crown crust pizza remove special from its name. This rule is only for crown crust and does not apply to anything else."
     ),
 )
