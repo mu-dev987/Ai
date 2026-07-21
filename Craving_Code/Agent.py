@@ -264,8 +264,14 @@ def order(
         print(e)
         return f"Invoice generated as {unique_filename} but something went wrong {e}"
     finally:
-        cursor.close()
-        conn.close()
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        try:
+            conn.close()
+        except Exception:
+            pass
 
     # RETURN SUCCESS
 
