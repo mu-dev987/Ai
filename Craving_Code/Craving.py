@@ -4,6 +4,7 @@ import os
 import uuid
 import re
 import streamlit as st
+import grpc
 from Agent import agent
 
 
@@ -45,7 +46,8 @@ if st.button("ASK"):
                 reply = result["messages"][-1].text
                 response_area.write(reply)
             except Exception as e:
-                if "429" in str(e):
+                code = e.code 
+                if code == 429 and e.grpc_status_code == grpc.StatusCode.RESOURCE_EXHAUSTED:
                     st.error("AW SNAP! Our AI Tokens are Finished :(")
                 else:
                     st.error("We are encountering a technical issue, please try later")
