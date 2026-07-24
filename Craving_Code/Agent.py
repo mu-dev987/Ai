@@ -1,17 +1,18 @@
 # IMPORTING
 
+import json
 import os
-from langchain.tools import tool
-from langchain.agents import create_agent
-from langgraph.checkpoint.memory import InMemorySaver
-from fpdf import FPDF
 import random
 from datetime import datetime
+from typing import Dict, List  # noqa: UP035
 from zoneinfo import ZoneInfo
+
 import streamlit as st
-from typing import List, Dict
-from mysql.connector import pooling 
-import json
+from fpdf import FPDF
+from langchain.agents import create_agent
+from langchain.tools import tool
+from langgraph.checkpoint.memory import InMemorySaver
+from mysql.connector import pooling
 from RAG import chain
 
 # PDF CLASS
@@ -131,10 +132,10 @@ def order(
         cursor.execute("SELECT bill_no FROM orders")
         rows = cursor.fetchall()
         column_as_list = [row[0] for row in rows]
-    except Exception as e:
+    except Exception as e:  
         try:
             cursor.close()
-        except Exception:
+        except Exception: 
             pass
         try:
             conn.close()
