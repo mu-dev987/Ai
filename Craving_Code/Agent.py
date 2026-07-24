@@ -10,7 +10,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import streamlit as st
 from typing import List, Dict
-import mysql.connector
+from mysql.connector import pooling 
 import json
 from RAG import chain
 
@@ -41,7 +41,24 @@ class ThermalReceipt(FPDF):
 
 # AI SETUP
 
-os.environ["GEMINI_API_KEY"] = st.secrets["BACKUP_API_KEY"]
+os.environ["GEMINI_API_KEY"] = st.secrets["YOUR_API_KEY"]
+
+# CONNECTION POOL
+
+db = {
+    "host": st.secrets["HOST"],
+    "user": st.secrets["USER"],
+    "password": st.secrets["PASSWORD"],
+    "database": st.secrets["DATABASE"] 
+}
+
+conn_pool = pooling.MySQLConnectionPool(
+    pool_name="craving_pool",
+    pool_size=8,                  
+    pool_reset_session=True,      
+    **db
+)
+
 
 # CHATBOT TOOL
 
@@ -57,8 +74,10 @@ def menu_assistant(query: str) -> str:
         return response
     except Exception as e:
         if "429" in str(e):
+            print(str(e))
             return "ERROR: Our AI engine token quota is temporarily exhausted."
         else:
+            print(str(e))
             return f"ERROR: Something went wrong: {type(e).__name__}"
 
 
@@ -107,15 +126,8 @@ def order(
     # DATABASE HANDLING
 
     try:
-        conn = mysql.connector.connect(
-            host=st.secrets["HOST"],
-            user=st.secrets["USER"],
-            password=st.secrets["PASSWORD"],
-            database=st.secrets["DATABASE"],
-        )
-
+        conn = conn_pool.get_connection()
         cursor = conn.cursor()
-
         cursor.execute("SELECT bill_no FROM orders")
         rows = cursor.fetchall()
         column_as_list = [row[0] for row in rows]
@@ -128,7 +140,11 @@ def order(
             conn.close()
         except Exception:
             pass
+        print(str(e))
         return f"failed to load order database {e}"
+
+    # BILL NO. GENERATION
+    
     unique_bill_no = False
     try:
         while not unique_bill_no:
@@ -143,6 +159,10 @@ def order(
         unique_filename = f"receipt_{bill_no}.pdf"
     except Exception as e:
         try:
+            conn.rollback()
+        except Exception:
+            pass
+        try:
             cursor.close()
         except Exception:
             pass
@@ -150,6 +170,7 @@ def order(
             conn.close()
         except Exception:
             pass
+        print(str(e))
         return f"something went wrong at bill generation {e}"
 
     # USER, EXTRA INFO DYNAMIC CODING
@@ -261,19 +282,31 @@ def order(
         )
         conn.commit()
     except Exception as e:
-        print(e)
-        return f"Invoice generated as {unique_filename} but something went wrong {e}"
-    finally:
+        print(str(e))
         try:
-            cursor.close()
+            conn.rollback()
+        except Exception:
+            pass
+        try:
+           cursor.close()
         except Exception:
             pass
         try:
             conn.close()
         except Exception:
             pass
+        return f"Order {bill_no} reserved, but saving details failed: {e}. Please contact the restaurant with this bill number."
 
     # RETURN SUCCESS
+
+    try:
+        cursor.close()
+    except Exception:
+        pass
+    try:
+        conn.close()
+    except Exception:
+        pass
 
     return f"Invoice generated as {unique_filename}"
 

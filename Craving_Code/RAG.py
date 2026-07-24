@@ -13,8 +13,8 @@ import streamlit as st
 
 # AI SETUP
 
-os.environ["GEMINI_API_KEY"] = st.secrets["EXTRA_API_KEY"]
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=0.7)
+os.environ["GEMINI_API_KEY"] = st.secrets["MY_API_KEY"]
+llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", temperature=0.7)
 
 # DOCUMENT CLEANERS
 
@@ -60,6 +60,7 @@ def initialize_retriever():
 try:
     retriever = initialize_retriever()
 except Exception as e:
+    print(str(e))
     st.error(f"Failed to load PDF database: {e}")
 
 # PROMPT ENGINEERING
